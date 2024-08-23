@@ -58,3 +58,23 @@ export const editUser = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+export const deleteUser = async (req, res) => {
+    try {
+
+        const id = req.user._id;
+        const user = await User.findById(id);
+
+        if (!user) return res.status(404).json([]);
+
+        user.reviews.forEach(el => Message.findByIdAndDelete(el));
+
+        await User.findByIdAndDelete(id);
+
+        res.status(204).json({ response: "User deleted succefully" });
+
+    } catch (e) {
+        console.error("Error in getUsersBySearch: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
