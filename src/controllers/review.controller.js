@@ -48,4 +48,21 @@ export const getReviews = async (req, res) => {
     }
 };
 
+export const deleteReview = async (req, res) => {
+    try {
+        const { id: reviewId } = req.params;
+        const senderId = req.user._id;
 
+        const review = await Review.findById(reviewId);
+
+        if (review.senderId == senderId) {
+            await Review.findByIdAndDelete(reviewId);
+            res.status(204).json({ response: "Review deleted succefully" });
+        }
+        res.status(401).json({ response: "Unauthorized" });
+
+    } catch (error) {
+        console.log("Error in deleteReview controller: ", error.review);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
