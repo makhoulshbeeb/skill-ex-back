@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.get("/", userAuth, getChats);
 router.post("/:id", userAuth, createChat);
-router.delete("/:id", userAuth, deleteChat)
+router.delete("/:id", userAuth, deleteChat);
 
 export default router;

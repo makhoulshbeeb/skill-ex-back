@@ -4,8 +4,8 @@ import userAuth from "../middleware/userAuth.js";
 
 const router = express.Router();
 
-router.get("/:id", userAuth, getReviews);
+router.get("/:id", getReviews);
 router.post("/:id", userAuth, addReview);
-router.delete("/:id", userAuth, deleteReview)
+router.delete("/:id", userAuth, deleteReview);
 
 export default router;

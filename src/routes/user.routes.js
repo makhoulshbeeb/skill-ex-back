@@ -4,9 +4,9 @@ import { deleteUser, editUser, getUserByUsername, getUsersBySearch } from "../co
 
 const router = express.Router();
 
-router.get("/:username", userAuth, getUserByUsername);
-router.get("/search/:search", userAuth, getUsersBySearch);
+router.get("/:username", getUserByUsername);
+router.get("/search/:search", getUsersBySearch);
 router.patch("/", userAuth, editUser);
-router.delete("/", userAuth, deleteUser)
+router.delete("/", userAuth, deleteUser);
 
 export default router;
