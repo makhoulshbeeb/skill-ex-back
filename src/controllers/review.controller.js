@@ -30,3 +30,22 @@ export const addReview = async (req, res) => {
     }
 };
 
+export const getReviews = async (req, res) => {
+    try {
+        const { id: receiverId } = req.params;
+
+        const receiver = await User.findById(receiverId).populate("reviews");
+
+        if (!receiver) return res.status(200).json([]);
+
+        const reviews = receiver.reviews;
+
+        res.status(200).json(reviews);
+
+    } catch (error) {
+        console.log("Error in getReviews controller: ", error.review);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+
