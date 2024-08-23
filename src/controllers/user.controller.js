@@ -33,6 +33,21 @@ export const getUserByUsername = async (req, res) => {
     }
 }
 
+export const getUserByMatch = async (req, res) => {
+    try {
+        const learn = req.user.learn;
+        const teach = req.user.teach;
+
+        const users = await User.find({ learn: { $in: teach }, teach: { $in: learn } });
+
+        res.status(200).json(users);
+    } catch (error) {
+        console.error("Error in getUsersBySearch: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+
 export const editUser = async (req, res) => {
 
     try {
