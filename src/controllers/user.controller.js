@@ -33,7 +33,7 @@ export const getUserByUsername = async (req, res) => {
     }
 }
 
-export const getUserByMatch = async (req, res) => {
+export const getUsersByMatch = async (req, res) => {
     try {
         const learn = req.user.learn;
         const teach = req.user.teach;
