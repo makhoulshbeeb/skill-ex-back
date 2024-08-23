@@ -39,3 +39,21 @@ export const createChat = async (req, res) => {
 };
 
 
+export const deleteChat = async (req, res) => {
+    try {
+        const { id: recieverId } = req.params;
+        const senderId = req.user._id;
+
+        const chat = await Chat.findOneAndDelete({
+            participants: { $all: [senderId, recieverId] },
+        });
+
+        if (!chat) return res.status(204).json([]);
+
+        res.status(204).json({ response: "Chat deleted succefully" });
+
+    } catch (error) {
+        console.log("Error in deleteChat controller: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
