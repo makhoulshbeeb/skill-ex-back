@@ -1,4 +1,5 @@
 import Chat from "../models/chat.model.js";
+import Message from "../models/message.model.js";
 
 export const getChats = async (req, res) => {
     try {
@@ -44,11 +45,17 @@ export const deleteChat = async (req, res) => {
         const { id: recieverId } = req.params;
         const senderId = req.user._id;
 
-        const chat = await Chat.findOneAndDelete({
+        const chat = await Chat.findOne({
             participants: { $all: [senderId, recieverId] },
         });
 
-        if (!chat) return res.status(204).json([]);
+        if (!chat) return res.status(404).json([]);
+
+        chat.messages.forEach(el => Message.findByIdAndDelete(el));
+
+        await Chat.findOneAndDelete({
+            participants: { $all: [senderId, recieverId] },
+        });
 
         res.status(204).json({ response: "Chat deleted succefully" });
 
