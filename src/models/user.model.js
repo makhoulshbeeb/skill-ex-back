@@ -36,6 +36,12 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: "",
         },
+        avgRating: {
+            type: Number,
+            min: 1,
+            max: 5,
+            default: 0
+        },
         reviews: {
             type: [
                 {
