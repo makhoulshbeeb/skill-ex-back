@@ -62,3 +62,23 @@ export const getMessages = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+
+export const deleteMessage = async (req, res) => {
+    try {
+        const { id: messageId } = req.params;
+        const senderId = req.user._id;
+
+        const message = await Message.findById(messageId);
+
+        if (message.senderId == senderId) {
+            await Message.findByIdAndDelete(messageId);
+            res.status(204).json({ response: "Message deleted succefully" });
+        }
+        res.status(401).json({ response: "Unauthorized" });
+
+    } catch (error) {
+        console.log("Error in deleteMessage controller: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
