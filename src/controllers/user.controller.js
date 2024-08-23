@@ -17,3 +17,16 @@ export const getUsersBySearch = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 }
+
+export const getUserByUsername = async (req, res) => {
+    try {
+
+        const username = req.params.username;
+        const user = User.findOne({ username: username });
+
+        res.status(200).json(user);
+    } catch (error) {
+        console.error("Error in getUsersBySearch: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
