@@ -1,6 +1,5 @@
 import User from "../models/user.model.js";
 import Review from "../models/review.model.js";
-import { getReceiverSocketId, io } from "../socket/socket.js";
 
 export const addReview = async (req, res) => {
     try {
@@ -8,7 +7,7 @@ export const addReview = async (req, res) => {
         const { id: receiverId } = req.params;
         const reviewerId = req.user._id;
 
-        const receiver = User.findById(receiverId);
+        const receiver = await User.findById(receiverId);
 
         const newReview = new Review({
             reviewerId,
@@ -16,11 +15,11 @@ export const addReview = async (req, res) => {
             rating,
         });
 
-        if (newReview) {
-            receiver.reviews.push(newReview._id);
-        }
+        if (newReview) receiver.reviews.push(newReview._id);
 
         await Promise.all([receiver.save(), newReview.save()]);
+
+        if (newReview) await User.findByIdAndUpdate(receiverId, [{ $set: { avgRating: { $avg: 'reviews.rating' } } }],);
 
         res.status(201).json(newReview);
 
@@ -57,6 +56,7 @@ export const deleteReview = async (req, res) => {
 
         if (review.senderId == senderId) {
             await Review.findByIdAndDelete(reviewId);
+            await User.findByIdAndUpdate(receiverId, [{ $set: { avgRating: { $avg: 'reviews.rating' } } }],);
             res.status(204).json({ response: "Review deleted succefully" });
         }
         res.status(401).json({ response: "Unauthorized" });
