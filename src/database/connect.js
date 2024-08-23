@@ -1,4 +1,4 @@
-import React from 'react'
+import mongoose from "mongoose";
 
 export default async function connectToMongoDB() {
     try {

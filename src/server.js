@@ -2,7 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
-import connectToMongoDB from "./database/connect";
+import connectToMongoDB from "./database/connect.js";
+import { app, server } from "./socket/socket.js";
 
 dotenv.config();
 

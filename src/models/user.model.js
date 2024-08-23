@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             unique: true,
+            pattern: "^[A-Za-z][A-Za-z0-9_]{7,29}$",
         },
         email: {
             type: String,
