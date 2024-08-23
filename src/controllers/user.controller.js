@@ -38,7 +38,7 @@ export const getUsersByMatch = async (req, res) => {
         const learn = req.user.learn;
         const teach = req.user.teach;
 
-        const users = await User.find({ learn: { $in: teach }, teach: { $in: learn } });
+        const users = await User.find({ learn: { $in: teach }, teach: { $in: learn } }).sort({ rating: 1 });
 
         res.status(200).json(users);
     } catch (error) {
