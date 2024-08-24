@@ -5,8 +5,8 @@ import { deleteUser, editUser, getUserByUsername, getUsersByMatch, getUsersBySea
 const router = express.Router();
 
 router.get("/:username", getUserByUsername);
-router.get("/search/:search", getUsersBySearch);
-router.get("/match/", getUsersByMatch);
+router.get("/search/:search", userAuth, getUsersBySearch);
+router.get("/match/", userAuth, getUsersByMatch);
 router.patch("/", userAuth, editUser);
 router.delete("/", userAuth, deleteUser);
 

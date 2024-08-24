@@ -10,6 +10,10 @@ export const signup = async (req, res) => {
             return res.status(400).json({ error: "Passwords don't match" });
         }
 
+        if (age < 13 || age > 100) {
+            return res.status(400).json({ error: "Invalid age" });
+        }
+
         var user = await User.findOne({ username });
 
         if (user) {
@@ -29,8 +33,6 @@ export const signup = async (req, res) => {
             ? `https://avatar.iran.liara.run/public/boy?username=${username}`
             : `https://avatar.iran.liara.run/public/girl?username=${username}`
         );
-
-        console.log(picture);
 
         const newUser = new User({
             displayName,
