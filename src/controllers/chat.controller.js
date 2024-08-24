@@ -51,7 +51,7 @@ export const deleteChat = async (req, res) => {
 
         if (!chat) return res.status(404).json([]);
 
-        chat.messages.forEach(el => Message.findByIdAndDelete(el));
+        chat.messages.forEach(async (el) => await Message.findByIdAndDelete(el));
 
         await Chat.findOneAndDelete({
             participants: { $all: [senderId, recieverId] },
