@@ -71,11 +71,12 @@ export const deleteMessage = async (req, res) => {
 
         const message = await Message.findById(messageId);
 
-        if (message.senderId == senderId) {
+        if (message.senderId.toString() == senderId.toString()) {
             await Message.findByIdAndDelete(messageId);
             res.status(204).json({ response: "Message deleted succefully" });
+        } else {
+            res.status(401).json({ response: "Unauthorized" });
         }
-        res.status(401).json({ response: "Unauthorized" });
 
     } catch (error) {
         console.log("Error in deleteMessage controller: ", error.message);
