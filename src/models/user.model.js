@@ -15,6 +15,8 @@ const userSchema = new mongoose.Schema(
                 validator: (username) => { return /^[a-zA-Z0-9_]+$/.test(username) },
                 message: "Please provide a valid username",
             },
+            minlength: 4,
+            maxlength: 24,
         },
         email: {
             type: String,
