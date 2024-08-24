@@ -81,7 +81,7 @@ export const deleteUser = async (req, res) => {
 
         if (!user) return res.status(404).json([]);
 
-        user.reviews.forEach(el => Message.findByIdAndDelete(el));
+        user.reviews.forEach(async (el) => await Message.findByIdAndDelete(el));
 
         await User.findByIdAndDelete(id);
 
