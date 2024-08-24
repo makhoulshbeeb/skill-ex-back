@@ -10,8 +10,12 @@ export const signup = async (req, res) => {
             return res.status(400).json({ error: "Passwords don't match" });
         }
 
+        if (!(/^[a-zA-Z0-9._]+$/.test(username))) {
+            return res.status(400).json({ error: "Invalid Username (Username should only contain letters, numbers or underscores)" });
+        }
+
         if (age < 13 || age > 100) {
-            return res.status(400).json({ error: "Invalid age" });
+            return res.status(400).json({ error: "Invalid age (Age should be between 13 and 100)" });
         }
 
         var user = await User.findOne({ username });

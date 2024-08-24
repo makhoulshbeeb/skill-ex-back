@@ -11,7 +11,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             unique: true,
-            pattern: "^[A-Za-z][A-Za-z0-9_]{7,29}$",
+            validate: {
+                validator: (username) => { return /^[a-zA-Z0-9_]+$/.test(username) },
+                message: "Please provide a valid username",
+            },
         },
         email: {
             type: String,
