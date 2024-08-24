@@ -1,8 +1,8 @@
-import Category from "../models/category.model";
+import Category from "../models/category.model.js";
 
 export const getCategories = async (req, res) => {
     try {
-        const categories = await Chat.find({});
+        const categories = await Category.find({});
 
         res.status(200).json(categories);
     } catch (error) {

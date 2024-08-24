@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import validator from "validator";
 
 const userSchema = new mongoose.Schema(
     {
@@ -44,7 +45,7 @@ const userSchema = new mongoose.Schema(
         },
         avgRating: {
             type: Number,
-            min: 1,
+            min: 0,
             max: 5,
             default: 0
         },

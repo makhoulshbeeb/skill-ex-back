@@ -24,7 +24,7 @@ export const getUserByUsername = async (req, res) => {
 
         const username = req.params.username;
 
-        const user = User.findOne({ username: username });
+        const user = User.findOne({ username: username }).select("-password").populate("reviews");
 
         res.status(200).json(user);
     } catch (error) {
@@ -38,7 +38,7 @@ export const getUsersByMatch = async (req, res) => {
         const learn = req.user.learn;
         const teach = req.user.teach;
 
-        const users = await User.find({ learn: { $in: teach }, teach: { $in: learn } }).sort({ rating: 1 });
+        const users = await User.find({ learn: { $in: teach }, teach: { $in: learn } }).select("-password").sort({ rating: 1 });
 
         res.status(200).json(users);
     } catch (error) {

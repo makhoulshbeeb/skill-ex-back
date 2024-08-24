@@ -4,13 +4,13 @@ import jwt from "jsonwebtoken";
 
 export const signup = async (req, res) => {
     try {
-        const { displayName, username, email, password, confirmPassword, gender } = req.body;
+        const { displayName, username, email, password, confirmPassword, gender, age } = req.body;
 
         if (password !== confirmPassword) {
             return res.status(400).json({ error: "Passwords don't match" });
         }
 
-        const user = await User.findOne({ username });
+        var user = await User.findOne({ username });
 
         if (user) {
             return res.status(400).json({ error: "Username already exists" });
@@ -25,10 +25,12 @@ export const signup = async (req, res) => {
         const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const profilePic = (gender === "male"
+        const picture = (gender === "male"
             ? `https://avatar.iran.liara.run/public/boy?username=${username}`
             : `https://avatar.iran.liara.run/public/girl?username=${username}`
         );
+
+        console.log(picture);
 
         const newUser = new User({
             displayName,
@@ -36,7 +38,8 @@ export const signup = async (req, res) => {
             email,
             password: hashedPassword,
             gender,
-            profilePic,
+            age,
+            picture,
         });
 
         if (newUser) {
@@ -48,7 +51,7 @@ export const signup = async (req, res) => {
                 displayName: newUser.displayName,
                 username: newUser.username,
                 email: newUser.email,
-                profilePic: newUser.profilePic,
+                picture: newUser.picture,
             });
         } else {
             res.status(400).json({ error: "Invalid user data" });
@@ -63,7 +66,7 @@ export const login = async (req, res) => {
     try {
         const { email, username, password } = req.body;
 
-        const user = email ? await User.findOne({ email }) : await User.findOne({ username });
+        const user = (email ? await User.findOne({ email }) : await User.findOne({ username }));
 
         const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
 
@@ -77,7 +80,7 @@ export const login = async (req, res) => {
             _id: user._id,
             displayName: user.displayName,
             username: user.username,
-            profilePic: user.profilePic,
+            picture: user.picture,
         });
     } catch (error) {
         console.log("Error in login controller", error.message);
