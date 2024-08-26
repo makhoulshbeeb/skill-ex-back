@@ -1,29 +1,30 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
+import validator from "validator";
 
 export const signup = async (req, res) => {
     try {
         const { displayName, username, email, password, confirmPassword, gender } = req.body;
 
-        if (password !== confirmPassword) {
-            return res.status(400).json({ error: "Passwords don't match" });
+        if (!validator.isEmail(email)) {
+            return res.status(400).json({ error: "Email is not valid" });
         }
 
         if (!(/^[a-zA-Z0-9._]+$/.test(username))) {
-            return res.status(400).json({ error: "Invalid Username (Username should only contain letters, numbers or underscores)" });
+            return res.status(400).json({ error: "Username should only contain letters, numbers or underscores" });
         }
 
         if (username.length < 4 || username.length > 24) {
-            return res.status(400).json({ error: "Invalid Username (Username should be between 4 and 24 characters)" });
-        }
-
-        if (age < 13 || age > 100) {
-            return res.status(400).json({ error: "Invalid age (Age should be between 13 and 100)" });
+            return res.status(400).json({ error: "Username should be between 4 and 24 characters" });
         }
 
         if (password.length < 8) {
-            return res.status(400).json({ error: "Invalid Password (Password should be at least 8 characters)" });
+            return res.status(400).json({ error: "Password should be at least 8 characters" });
+        }
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({ error: "Passwords don't match" });
         }
 
         var user = await User.findOne({ username });
