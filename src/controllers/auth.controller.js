@@ -78,14 +78,19 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const { email, username, password } = req.body;
+        const { credential, password } = req.body;
+        const email = validator.isEmail(credential);
 
-        const user = (email ? await User.findOne({ email }) : await User.findOne({ username }));
+        const user = (email ? await User.findOne({ email: credential }) : await User.findOne({ username: credential }));
+
+        if (!user) {
+            return res.status(400).json({ error: `Invalid ${email ? 'Email' : 'Username'}` });
+        }
 
         const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
 
-        if (!user || !isPasswordCorrect) {
-            return res.status(400).json({ error: `Invalid ${email ? 'email' : 'username'} or password` });
+        if (!isPasswordCorrect) {
+            return res.status(400).json({ error: `Invalid Password` });
         }
 
         generateTokenAndSetCookie(user._id, res);
