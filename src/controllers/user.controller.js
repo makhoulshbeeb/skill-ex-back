@@ -1,4 +1,7 @@
 import User from "../models/user.model.js";
+import Review from "../models/review.model.js";
+import Chat from "../models/chat.model.js";
+import Message from "../models/message.model.js";
 
 export const getUsersBySearch = async (req, res) => {
     try {
@@ -80,7 +83,15 @@ export const deleteUser = async (req, res) => {
 
         if (!user) return res.status(404).json([]);
 
-        user.reviews.forEach(async (el) => await Message.findByIdAndDelete(el));
+        user.reviews.forEach(async (el) => await Review.findByIdAndDelete(el));
+
+        const chats = await Chat.find({
+            participants: { $all: [id] },
+        });
+
+        if (!chats) return res.status(404).json([]);
+
+        chats.every(delChat);
 
         await User.findByIdAndDelete(id);
 
@@ -91,3 +102,11 @@ export const deleteUser = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+const delChat = async (chat) => {
+    chat.messages.every(delMessage);
+    await Chat.findByIdAndDelete(chat._id);
+};
+const delMessage = async (message) => {
+    await Message.findByIdAndDelete(message._id);
+} 
