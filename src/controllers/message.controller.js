@@ -72,7 +72,7 @@ export const deleteMessage = async (req, res) => {
         const message = await Message.findById(messageId);
 
         if (message.senderId.toString() == senderId.toString()) {
-            await Chat.findOneAndUpdate({ participants: { $all: [senderId, message.receiverId] } }, [{ $pull: { messages: { $in: [messageId] } } }]);
+            await Chat.findOneAndUpdate({ participants: { $all: [senderId, message.receiverId] } }, { $pull: { messages: { $in: [messageId] } } });
             await Message.findByIdAndDelete(messageId);
             res.status(204).json({ response: "Message deleted succefully" });
         } else {

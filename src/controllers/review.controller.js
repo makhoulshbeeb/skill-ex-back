@@ -20,7 +20,7 @@ export const addReview = async (req, res) => {
 
         await Promise.all([receiver.save(), newReview.save()]);
 
-        if (newReview) await User.findByIdAndUpdate(receiverId, [{ $set: { avgRating: { $avg: '$reviews.rating' } } }],);
+        if (newReview) await User.findByIdAndUpdate(receiverId, { $set: { avgRating: { $avg: '$reviews.rating' } } });
 
         res.status(201).json(newReview);
 
@@ -61,7 +61,7 @@ export const deleteReview = async (req, res) => {
 
         if (review.reviewerId.toString() == reviewerId.toString()) {
             await Review.findByIdAndDelete(reviewId);
-            const receiver = await User.findByIdAndUpdate(receiverId, [{ $pull: { reviews: { $in: [reviewId] } } }, { $set: { avgRating: { $avg: '$reviews.rating' } } }]);
+            const receiver = await User.findByIdAndUpdate(receiverId, { $pull: { reviews: { $in: [reviewId] } } }, { $set: { avgRating: { $avg: '$reviews.rating' } } });
             return res.status(204).json({ response: "Review deleted succefully" });
         }
         res.status(401).json({ response: "Unauthorized" });
