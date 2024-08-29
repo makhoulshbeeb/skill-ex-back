@@ -42,11 +42,11 @@ export const createChat = async (req, res) => {
 
 export const deleteChat = async (req, res) => {
     try {
-        const { id: recieverId } = req.params;
+        const { id: receiverId } = req.params;
         const senderId = req.user._id;
 
         const chat = await Chat.findOne({
-            participants: { $all: [senderId, recieverId] },
+            participants: { $all: [senderId, receiverId] },
         });
 
         if (!chat) return res.status(404).json([]);
@@ -54,7 +54,7 @@ export const deleteChat = async (req, res) => {
         chat.messages.forEach(async (el) => await Message.findByIdAndDelete(el));
 
         await Chat.findOneAndDelete({
-            participants: { $all: [senderId, recieverId] },
+            participants: { $all: [senderId, receiverId] },
         });
 
         res.status(204).json({ response: "Chat deleted succefully" });

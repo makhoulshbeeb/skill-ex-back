@@ -45,11 +45,11 @@ export const sendMessage = async (req, res) => {
 
 export const getMessages = async (req, res) => {
     try {
-        const { id: recieverId } = req.params;
+        const { id: receiverId } = req.params;
         const senderId = req.user._id;
 
         const chat = await Chat.findOne({
-            participants: { $all: [senderId, recieverId] },
+            participants: { $all: [senderId, receiverId] },
         }).populate("messages");
 
         if (!chat) return res.status(200).json([]);
@@ -72,6 +72,7 @@ export const deleteMessage = async (req, res) => {
         const message = await Message.findById(messageId);
 
         if (message.senderId.toString() == senderId.toString()) {
+            await Chat.findOneAndUpdate({ participants: { $all: [senderId, message.receiverId] } }, [{ $pull: { messages: { $in: [messageId] } } }]);
             await Message.findByIdAndDelete(messageId);
             res.status(204).json({ response: "Message deleted succefully" });
         } else {
