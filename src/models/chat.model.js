@@ -9,7 +9,6 @@ const chatSchema = new mongoose.Schema(
                     ref: "User",
                 },
             ],
-            unique: true,
         },
         messages: [
             {

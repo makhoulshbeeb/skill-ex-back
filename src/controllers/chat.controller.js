@@ -7,10 +7,9 @@ export const getChats = async (req, res) => {
 
         const chats = await Chat.find({
             participants: { $all: [senderId] },
-        });
+        }).populate({ path: 'participants', select: 'displayName username email picture', match: { _id: { $ne: senderId } } });
 
         if (!chats) return res.status(200).json([]);
-
         res.status(200).json(chats);
     } catch (error) {
         console.log("Error in getChats controller: ", error.message);
