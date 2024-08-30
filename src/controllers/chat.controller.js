@@ -7,7 +7,7 @@ export const getChats = async (req, res) => {
 
         const chats = await Chat.find({
             participants: { $all: [senderId] },
-        }).populate({ path: 'participants', select: 'displayName username email picture', match: { _id: { $ne: senderId } } });
+        }).populate({ path: 'participants', select: 'displayName username email picture', match: { _id: { $ne: senderId } } }).sort({ updatedAt: -1 });
 
         if (!chats) return res.status(200).json([]);
         res.status(200).json(chats);
