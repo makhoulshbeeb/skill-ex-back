@@ -4,7 +4,7 @@ import { deleteUser, editUser, getUserByToken, getUserByUsername, getUsersByMatc
 
 const router = express.Router();
 
-router.get("/:username", getUserByUsername);
+router.get("/user/:username", getUserByUsername);
 router.get("/me", userAuth, getUserByToken)
 router.get("/search/:search", userAuth, getUsersBySearch);
 router.get("/match/", userAuth, getUsersByMatch);

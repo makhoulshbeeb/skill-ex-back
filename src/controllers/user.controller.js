@@ -4,13 +4,18 @@ import Chat from "../models/chat.model.js";
 import Message from "../models/message.model.js";
 
 export const getUserByToken = async (req, res) => {
-    const user = req.user;
-    res.status(200).json({
-        _id: user._id,
-        displayName: user.displayName,
-        username: user.username,
-        picture: user.picture,
-    });
+    try {
+        const user = req.user;
+        res.status(200).json({
+            _id: user._id,
+            displayName: user.displayName,
+            username: user.username,
+            picture: user.picture,
+        });
+    } catch (error) {
+        console.error("Error in getUsersByToken: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
 }
 
 export const getUsersBySearch = async (req, res) => {
