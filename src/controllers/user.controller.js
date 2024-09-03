@@ -3,6 +3,16 @@ import Review from "../models/review.model.js";
 import Chat from "../models/chat.model.js";
 import Message from "../models/message.model.js";
 
+export const getUserByToken = async (req, res) => {
+    const user = req.user;
+    res.status(200).json({
+        _id: user._id,
+        displayName: user.displayName,
+        username: user.username,
+        picture: user.picture,
+    });
+}
+
 export const getUsersBySearch = async (req, res) => {
     try {
         const search = req.params.search;

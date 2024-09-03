@@ -16,9 +16,10 @@ import cors from "cors"
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
+const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
 
 app.use(express.json());
-app.use(cors())
+app.use(cors({ credentials: true, origin: `http://localhost:${FRONTEND_PORT}` }))
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
