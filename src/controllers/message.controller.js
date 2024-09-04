@@ -30,12 +30,13 @@ export const sendMessage = async (req, res) => {
 
         await Promise.all([chat.save(), newMessage.save()]);
 
-        const receiverSocketId = getReceiverSocketId(receiverId);
         const senderSocketId = getReceiverSocketId(senderId);
+        io.to(senderSocketId).emit("newMessage", newMessage);
+
+        const receiverSocketId = getReceiverSocketId(receiverId);
 
         if (receiverSocketId) {
             io.to(receiverSocketId).emit("newMessage", newMessage);
-            io.to(senderSocketId).emit("newMessage", newMessage);
         }
 
         res.status(201).json(newMessage);
