@@ -9,20 +9,19 @@ export const addReview = async (req, res) => {
 
         const receiver = await User.findById(receiverId);
 
-        const newReview = new Review({
+        const newReview = {
             reviewerId,
-            receiverId,
             feedback,
             rating,
-        });
+            createdAt: new Date(),
+        };
 
-        if (newReview) receiver.reviews.push(newReview._id);
+        receiver.reviews.push(newReview);
 
-        await Promise.all([receiver.save(), newReview.save()]);
-
-        if (newReview) await User.findByIdAndUpdate(receiverId, { $set: { avgRating: { $avg: '$reviews.rating' } } });
-
+        await receiver.save();
         res.status(201).json(newReview);
+
+        await User.findByIdAndUpdate(receiverId, { $set: { avgRating: { $avg: '$reviews.rating' } } });
 
     } catch (error) {
         console.log("Error in addReview controller: ", error.review);
@@ -34,7 +33,7 @@ export const getReviews = async (req, res) => {
     try {
         const { id: receiverId } = req.params;
 
-        const receiver = await User.findById(receiverId).populate("reviews");
+        const receiver = await User.findById(receiverId);
 
         if (!receiver) return res.status(200).json([]);
 
@@ -50,21 +49,24 @@ export const getReviews = async (req, res) => {
 
 export const deleteReview = async (req, res) => {
     try {
-        const { id: reviewId } = req.params;
+        const { reviewId, receiverId } = req.params;
         const reviewerId = req.user._id;
 
-        const review = await Review.findById(reviewId);
+        const receiver = await User.findById(receiverId);
 
-        if (!review) return res.status(404).json([]);
+        if (!receiver) return res.status(404).json([]);
 
-        const receiverId = review.receiverId;
+        receiver.reviews = receiver.reviews.filter((review) => {
+            if (review.reviewerId.toString() == reviewerId.toString() && review._id.toString() == reviewId.toString()) {
+                return false;
+            }
+            return true;
+        });
 
-        if (review.reviewerId.toString() == reviewerId.toString()) {
-            await Review.findByIdAndDelete(reviewId);
-            const receiver = await User.findByIdAndUpdate(receiverId, { $pull: { reviews: { $in: [reviewId] } } }, { $set: { avgRating: { $avg: '$reviews.rating' } } });
-            return res.status(204).json({ response: "Review deleted succefully" });
-        }
-        res.status(401).json({ response: "Unauthorized" });
+        await receiver.save();
+        res.status(204).json({ response: "Review deleted succefully" });
+
+        await User.findByIdAndUpdate(receiverId, { $set: { avgRating: { $avg: '$reviews.rating' } } });
 
     } catch (error) {
         console.log("Error in deleteReview controller: ", error.message);
