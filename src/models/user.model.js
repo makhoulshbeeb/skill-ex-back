@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import validator from "validator";
 
 const userSchema = new mongoose.Schema(
@@ -55,30 +55,8 @@ const userSchema = new mongoose.Schema(
         reviews: {
             type: [
                 {
-                    _id: {
-                        type: Schema.Types.ObjectId,
-                        unique: true,
-                        required: true,
-                    },
-                    reviewerId: {
-                        type: mongoose.Schema.Types.ObjectId,
-                        ref: "User",
-                        required: true,
-                    },
-                    feedback: {
-                        type: String,
-                        required: true,
-                    },
-                    rating: {
-                        type: Number,
-                        required: true,
-                        min: 1,
-                        max: 5,
-                    },
-                    createdAt: {
-                        type: Date,
-                        required: true,
-                    }
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Review",
                 },
             ],
             default: [],

@@ -7,24 +7,26 @@ export const addReview = async (req, res) => {
         const { id: receiverId } = req.params;
         const reviewerId = req.user._id;
 
-        const receiver = await User.findById(receiverId);
+        const receiver = await User.findById(receiverId).select("-password").populate('reviews');
 
-        const newReview = {
+        const newReview = new Review({
             reviewerId,
+            receiverId,
             feedback,
             rating,
-            createdAt: new Date(),
-        };
+        });
 
-        receiver.reviews.push(newReview);
+        if (newReview) {
+            receiver.avgRating = (receiver.avgRating * receiver.reviews.length + rating) / (receiver.reviews.length + 1);
+            receiver.reviews.push(newReview);
+        }
 
-        await receiver.save();
+        await Promise.all([receiver.save(), newReview.save()]);
+
         res.status(201).json(newReview);
 
-        await User.findByIdAndUpdate(receiverId, { $set: { avgRating: { $avg: '$reviews.rating' } } });
-
     } catch (error) {
-        console.log("Error in addReview controller: ", error.review);
+        console.log("Error in addReview controller: ", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -33,7 +35,7 @@ export const getReviews = async (req, res) => {
     try {
         const { id: receiverId } = req.params;
 
-        const receiver = await User.findById(receiverId);
+        const receiver = await User.findById(receiverId).populate("reviews");
 
         if (!receiver) return res.status(200).json([]);
 
@@ -49,24 +51,29 @@ export const getReviews = async (req, res) => {
 
 export const deleteReview = async (req, res) => {
     try {
-        const { reviewId, receiverId } = req.params;
+        const { id: reviewId } = req.params;
         const reviewerId = req.user._id;
 
-        const receiver = await User.findById(receiverId);
+        const review = await Review.findById(reviewId);
 
-        if (!receiver) return res.status(404).json([]);
+        if (!review) return res.status(404).json([]);
 
-        receiver.reviews = receiver.reviews.filter((review) => {
-            if (review.reviewerId.toString() == reviewerId.toString() && review._id.toString() == reviewId.toString()) {
-                return false;
-            }
-            return true;
-        });
+        const receiverId = review.receiverId;
 
-        await receiver.save();
-        res.status(204).json({ response: "Review deleted succefully" });
-
-        await User.findByIdAndUpdate(receiverId, { $set: { avgRating: { $avg: '$reviews.rating' } } });
+        if (review.reviewerId.toString() == reviewerId.toString()) {
+            const receiver = await User.findById(receiverId);
+            receiver.avgRating = receiver.reviews.length > 1 ? (receiver.avgRating * (receiver.reviews.length) - review.rating) / (receiver.reviews.length - 1) : 0;
+            receiver.reviews = receiver.reviews.filter((el) => {
+                if (el == reviewId) {
+                    return false;
+                }
+                return true;
+            })
+            await receiver.save();
+            await Review.findByIdAndDelete(reviewId);
+            return res.status(204).json({ response: "Review deleted succefully" });
+        }
+        res.status(401).json({ response: "Unauthorized" });
 
     } catch (error) {
         console.log("Error in deleteReview controller: ", error.message);
