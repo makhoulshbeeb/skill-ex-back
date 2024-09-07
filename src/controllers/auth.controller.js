@@ -44,7 +44,9 @@ export const signup = async (req, res) => {
 
         const picture = (gender === "male"
             ? `https://avatar.iran.liara.run/public/boy?username=${username}`
-            : `https://avatar.iran.liara.run/public/girl?username=${username}`
+            : gender == "female"
+                ? `https://avatar.iran.liara.run/public/girl?username=${username}`
+                : `https://avatar.iran.liara.run/public/?username=${username}`
         );
 
         const newUser = new User({
