@@ -60,11 +60,11 @@ export const getUsersByMatch = async (req, res) => {
         var teachTemp = [];
 
         learn.forEach(el => {
-            learnTemp = [...learnTemp, el.category];
+            learnTemp.push(el.category);
         });
 
         teach.forEach(el => {
-            teachTemp = [...teachTemp, el.category];
+            teachTemp.push(el.category);
         });
 
         learn = learnTemp.toString().split(',');
