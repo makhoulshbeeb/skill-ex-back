@@ -64,9 +64,16 @@ const userSchema = new mongoose.Schema(
         learn: {
             type: [
                 {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "Category",
-                }
+                    category: {
+                        type: mongoose.Schema.Types.ObjectId,
+                        ref: "Category"
+                    },
+                    endorsements: {
+                        type: Number,
+                        default: 0
+                    }
+                },
+
             ],
             default: [],
         },

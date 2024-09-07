@@ -94,7 +94,6 @@ export const editUser = async (req, res) => {
     try {
         const id = req.user._id;
         const { displayName, email, username, gender, picture, learn, teach } = req.body;
-
         const user = await User.findById(id).select("-password");
 
         user.displayName = displayName ?? user.displayName;
