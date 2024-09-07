@@ -25,7 +25,7 @@ export const getUsersBySearch = async (req, res) => {
         const rgx = (pattern) => new RegExp(`.*${pattern}.*`, 'i');
         const searchRgx = rgx(search);
 
-        const loggedInUserId = req.user._id;
+        const loggedInUserId = req.user ? req.user._id : null;
 
         const filteredUsers = await User.find({ _id: { $ne: loggedInUserId }, $or: [{ displayName: searchRgx }, { username: searchRgx }] }).select("-password");
 
@@ -45,21 +45,45 @@ export const getUserByUsername = async (req, res) => {
 
         res.status(200).json(user);
     } catch (error) {
-        console.error("Error in getUsersBySearch: ", error.message);
+        console.error("Error in getUsersByUsername: ", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
 }
 
 export const getUsersByMatch = async (req, res) => {
     try {
-        const learn = req.user.learn;
-        const teach = req.user.teach;
+        var learn = req.user.learn;
+        var teach = req.user.teach;
 
-        const users = await User.find({ learn: { $in: teach }, teach: { $in: learn } }).select("-password").sort({ rating: 1 });
+        learn = learn.toString().split(',');
+        teach = teach.toString().split(',');
+
+        const loggedInUserId = req.user ? req.user._id : null;
+
+        const users = await User.aggregate([
+            {
+                $match: {
+                    _id: { $ne: loggedInUserId },
+                    learn: { $in: teach },
+                    teach: { $in: learn },
+                }
+            },
+            {
+                $project: {
+                    avgRating: 1,
+                    displayName: 1,
+                    username: 1,
+                    email: 1,
+                    picture: 1,
+                    bio: 1,
+                }
+            }
+
+        ]).sort({ avgRating: -1 });
 
         res.status(200).json(users);
     } catch (error) {
-        console.error("Error in getUsersBySearch: ", error.message);
+        console.error("Error in getUsersByMatch: ", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
 }
@@ -85,7 +109,7 @@ export const editUser = async (req, res) => {
 
         res.status(200).json(user);
     } catch (error) {
-        console.error("Error in getUsersBySearch: ", error.message);
+        console.error("Error in editUser: ", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -113,7 +137,7 @@ export const deleteUser = async (req, res) => {
         res.status(204).json({ response: "User deleted succefully" });
 
     } catch (e) {
-        console.error("Error in getUsersBySearch: ", error.message);
+        console.error("Error in deleteUser: ", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
 };
