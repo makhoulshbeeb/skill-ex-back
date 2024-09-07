@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import Review from "../models/review.model.js";
 import Chat from "../models/chat.model.js";
 import Message from "../models/message.model.js";
+import Category from "../models/category.model.js"
 
 export const getUserByToken = async (req, res) => {
     try {
@@ -55,31 +56,44 @@ export const getUsersByMatch = async (req, res) => {
         var learn = req.user.learn;
         var teach = req.user.teach;
 
-        learn = learn.toString().split(',');
-        teach = teach.toString().split(',');
+        var learnTemp = [];
+        var teachTemp = [];
 
-        const loggedInUserId = req.user ? req.user._id : null;
+        learn.forEach(el => {
+            learnTemp = [...learnTemp, el.category];
+        });
 
-        const users = await User.aggregate([
-            {
-                $match: {
-                    _id: { $ne: loggedInUserId },
-                    learn: { $in: teach },
-                    teach: { $in: learn },
-                }
-            },
-            {
-                $project: {
-                    avgRating: 1,
-                    displayName: 1,
-                    username: 1,
-                    email: 1,
-                    picture: 1,
-                    bio: 1,
-                }
-            }
+        teach.forEach(el => {
+            teachTemp = [...teachTemp, el.category];
+        });
 
-        ]).sort({ avgRating: -1 });
+        learn = learnTemp.toString().split(',');
+        teach = teachTemp.toString().split(',');
+
+        const loggedInUserId = req.user._id;
+
+        // const users = await User.aggregate([
+        //     {
+        //         $match: {
+        //             _id: { $ne: loggedInUserId },
+        //             learn: { category: { $in: teach } },
+        //             // teach: { $in: learn },
+        //         }
+        //     },
+        //     {
+        //         $project: {
+        //             avgRating: 1,
+        //             displayName: 1,
+        //             username: 1,
+        //             email: 1,
+        //             picture: 1,
+        //             bio: 1,
+        //             learn: 1,
+        //         }
+        //     }
+
+        // ]).sort({ avgRating: -1 });
+
 
         res.status(200).json(users);
     } catch (error) {

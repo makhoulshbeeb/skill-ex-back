@@ -71,7 +71,8 @@ const userSchema = new mongoose.Schema(
                     endorsements: {
                         type: Number,
                         default: 0
-                    }
+                    },
+                    _id: false,
                 },
 
             ],
@@ -80,8 +81,11 @@ const userSchema = new mongoose.Schema(
         teach: {
             type: [
                 {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "Category",
+                    category: {
+                        type: mongoose.Schema.Types.ObjectId,
+                        ref: "Category"
+                    },
+                    _id: false,
                 }
             ],
             default: [],
