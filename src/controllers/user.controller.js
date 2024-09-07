@@ -94,6 +94,11 @@ export const getUsersByMatch = async (req, res) => {
 
         // ]).sort({ avgRating: -1 });
 
+        const users = await User.find({
+            _id: { $ne: loggedInUserId },
+            'teach.category': { $in: learn },
+            'learn.category': { $in: teach }
+        }).select("-password").sort({ avgRating: -1 }).populate('learn.category');
 
         res.status(200).json(users);
     } catch (error) {
