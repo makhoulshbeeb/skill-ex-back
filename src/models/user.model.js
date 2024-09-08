@@ -68,10 +68,10 @@ const userSchema = new mongoose.Schema(
                         type: mongoose.Schema.Types.ObjectId,
                         ref: "Category"
                     },
-                    endorsements: {
-                        type: Number,
-                        default: 0
-                    },
+                    endorsements: [{
+                        type: mongoose.Schema.Types.ObjectId,
+                        ref: "User"
+                    }],
                     _id: false,
                 },
 
