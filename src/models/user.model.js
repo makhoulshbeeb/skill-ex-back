@@ -61,7 +61,7 @@ const userSchema = new mongoose.Schema(
             ],
             default: [],
         },
-        learn: {
+        teach: {
             type: [
                 {
                     category: {
@@ -78,7 +78,7 @@ const userSchema = new mongoose.Schema(
             ],
             default: [],
         },
-        teach: {
+        learn: {
             type: [
                 {
                     category: {

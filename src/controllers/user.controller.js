@@ -98,7 +98,7 @@ export const getUsersByMatch = async (req, res) => {
             _id: { $ne: loggedInUserId },
             'teach.category': { $in: learn },
             'learn.category': { $in: teach }
-        }).select("-password").sort({ avgRating: -1 }).populate('learn.category');
+        }).select("-password").sort({ avgRating: -1 }).populate('teach.category');
 
         res.status(200).json(users);
     } catch (error) {
@@ -107,6 +107,28 @@ export const getUsersByMatch = async (req, res) => {
     }
 }
 
+export const endorseUser = async (req, res) => {
+    try {
+        const id = req.user._id;
+        const { receiverId } = req.params;
+        const { categoryId } = req.body;
+        const receiver = await User.find({ _id: receiverId });
+        receiver.teach.forEach((el) => {
+            if (el.category == categoryId) {
+                var index = el.endorsements.indexOf(item);
+                if (index !== -1) {
+                    el.endorsements.splice(index, 1);
+                } else {
+                    el.endorsements.push(id);
+                }
+            }
+        });
+        await receiver.save();
+    } catch (error) {
+        console.error("Error in endorseUser: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
 
 export const editUser = async (req, res) => {
 
