@@ -37,12 +37,34 @@ export const getUsersBySearch = async (req, res) => {
     }
 }
 
+export const getUserById = async (req, res) => {
+    try {
+
+        const userId = req.params.id;
+
+        const user = await User.findById(userId).select("-password").populate("reviews");
+
+        if (!user) {
+            return res.status(400).json({ error: "User doesn't exist" });
+        }
+
+        res.status(200).json(user);
+    } catch (error) {
+        console.error("Error in getUsersByUsername: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
 export const getUserByUsername = async (req, res) => {
     try {
 
         const username = req.params.username;
 
         const user = await User.findOne({ username }).select("-password").populate("reviews");
+
+        if (!user) {
+            return res.status(400).json({ error: "User doesn't exist" });
+        }
 
         res.status(200).json(user);
     } catch (error) {
