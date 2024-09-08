@@ -112,10 +112,14 @@ export const endorseUser = async (req, res) => {
         const senderId = req.user._id;
         const { id: receiverId } = req.params;
         const { categoryId } = req.body;
-        const receiver = await User.find({ _id: receiverId });
+        const receiver = await User.findOne({ _id: receiverId });
+
+        if (!receiver) {
+            return res.status(400).json({ error: "User doesn't exist" });
+        }
         receiver.teach.forEach((el) => {
             if (el.category == categoryId) {
-                var index = el.endorsements.indexOf(item);
+                var index = el.endorsements.indexOf(senderId);
                 if (index !== -1) {
                     el.endorsements.splice(index, 1);
                 } else {
@@ -124,6 +128,7 @@ export const endorseUser = async (req, res) => {
             }
         });
         await receiver.save();
+        res.status(200).json({ message: "User endorsed successfully!" })
     } catch (error) {
         console.error("Error in endorseUser: ", error.message);
         res.status(500).json({ error: "Internal server error" });
