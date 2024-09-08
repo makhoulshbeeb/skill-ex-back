@@ -109,8 +109,8 @@ export const getUsersByMatch = async (req, res) => {
 
 export const endorseUser = async (req, res) => {
     try {
-        const id = req.user._id;
-        const { receiverId } = req.params;
+        const senderId = req.user._id;
+        const { id: receiverId } = req.params;
         const { categoryId } = req.body;
         const receiver = await User.find({ _id: receiverId });
         receiver.teach.forEach((el) => {
@@ -119,7 +119,7 @@ export const endorseUser = async (req, res) => {
                 if (index !== -1) {
                     el.endorsements.splice(index, 1);
                 } else {
-                    el.endorsements.push(id);
+                    el.endorsements.push(senderId);
                 }
             }
         });
