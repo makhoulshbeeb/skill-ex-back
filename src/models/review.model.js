@@ -25,7 +25,8 @@ const reviewSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
-
+reviewSchema.index({ reviewerId: 1, receiverId: 1 }, { unique: true })
 const Review = mongoose.model("Review", reviewSchema);
+
 
 export default Review;
