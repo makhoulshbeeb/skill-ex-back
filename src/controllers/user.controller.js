@@ -60,7 +60,16 @@ export const getUserByUsername = async (req, res) => {
 
         const username = req.params.username;
 
-        const user = await User.findOne({ username }).select("-password").populate("reviews").populate("teach.category").populate("learn.category");
+        const user = await User.findOne({ username })
+            .select("-password")
+            .populate({
+                path: "reviews",
+                populate: {
+                    path: 'reviewerId',
+                    select: '_id displayName username email picture'
+                }
+            })
+            .populate("teach.category learn.category");
 
         if (!user) {
             return res.status(400).json({ error: "User doesn't exist" });
