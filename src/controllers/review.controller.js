@@ -8,7 +8,12 @@ export const addReview = async (req, res) => {
         const reviewerId = req.user._id;
 
         const receiver = await User.findById(receiverId).select("-password").populate('reviews');
+        const review = await Review.findOne({ reviewerId, receiverId });
 
+        if (review) {
+            receiver.reviews = receiver.reviews.filter(el => el._id == review._id);
+            await Review.findByIdAndDelete(review._id);
+        }
         const newReview = new Review({
             reviewerId,
             receiverId,
@@ -21,7 +26,9 @@ export const addReview = async (req, res) => {
             receiver.reviews.push(newReview);
         }
 
-        await Promise.all([receiver.save(), newReview.save()]);
+        await newReview.save();
+
+        await receiver.save();
 
         res.status(201).json(newReview);
 
