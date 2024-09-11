@@ -10,10 +10,6 @@ export const addReview = async (req, res) => {
         const receiver = await User.findById(receiverId).select("-password").populate('reviews');
         const review = await Review.findOne({ reviewerId, receiverId });
 
-        if (review) {
-            receiver.reviews = receiver.reviews.filter(el => el._id == review._id);
-            await Review.findByIdAndDelete(review._id);
-        }
         const newReview = new Review({
             reviewerId,
             receiverId,
@@ -22,6 +18,11 @@ export const addReview = async (req, res) => {
         });
 
         if (newReview) {
+            if (review) {
+                receiver.avgRating = receiver.reviews.length > 1 ? (receiver.avgRating * (receiver.reviews.length) - review.rating) / (receiver.reviews.length - 1) : 0;
+                receiver.reviews = receiver.reviews.filter(el => el._id == review._id);
+                await Review.findByIdAndDelete(review._id);
+            }
             receiver.avgRating = (receiver.avgRating * receiver.reviews.length + rating) / (receiver.reviews.length + 1);
             receiver.reviews.push(newReview);
         }
