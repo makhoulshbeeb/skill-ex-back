@@ -34,11 +34,11 @@ io.on("connection", (socket) => {
     });
 
     socket.on("callUser", (data) => {
-        io.to(data.userToCall).emit("callUser", { signal: data.signalData, from: data.from, name: data.name })
+        io.to(userSocketMap[data.userToCall]).emit("callUser", { signal: data.signalData, from: data.from, name: data.name })
     });
 
     socket.on("answerCall", (data) => {
-        io.to(data.to).emit("callAccepted", data.signal)
+        io.to(userSocketMap[data.to]).emit("callAccepted", data.signal)
     });
 });
 
