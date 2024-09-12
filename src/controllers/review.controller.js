@@ -20,10 +20,13 @@ export const addReview = async (req, res) => {
         if (newReview) {
             if (review) {
                 receiver.avgRating = receiver.reviews.length > 1 ? (receiver.avgRating * (receiver.reviews.length) - review.rating) / (receiver.reviews.length - 1) : 0;
-                receiver.reviews = receiver.reviews.filter(el => el._id == review._id);
+
+                receiver.reviews = receiver.reviews.filter(el => el._id.toString() != review._id.toString());
                 await Review.findByIdAndDelete(review._id);
             }
+            console.log(receiver.avgRating, receiver.reviews);
             receiver.avgRating = (receiver.avgRating * receiver.reviews.length + rating) / (receiver.reviews.length + 1);
+            console.log(receiver.avgRating);
             receiver.reviews.push(newReview);
         }
 
