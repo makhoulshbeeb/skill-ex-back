@@ -9,7 +9,7 @@ router.get("/id/:id", getUserById);
 router.get("/me", userAuth, getUserByToken)
 router.get("/search/:search", userAuth, getUsersBySearch);
 router.get("/match/", userAuth, getUsersByMatch);
-router.post("/endorse/:id", userAuth, endorseUser);
+router.patch("/endorse/:id", userAuth, endorseUser);
 router.patch("/", userAuth, editUser);
 router.delete("/", userAuth, deleteUser);
 
