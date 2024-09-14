@@ -21,7 +21,7 @@ export const getUserByToken = async (req, res) => {
 
 export const getUsersBySearch = async (req, res) => {
     try {
-        const search = req.params.search;
+        const search = req.body.search;
 
         const rgx = (pattern) => new RegExp(`.*${pattern}.*`, 'i');
         const searchRgx = rgx(search);

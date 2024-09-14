@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("/user/:username", getUserByUsername);
 router.get("/id/:id", getUserById);
 router.get("/me", userAuth, getUserByToken)
-router.get("/search/:search", userAuth, getUsersBySearch);
+router.get("/search/", userAuth, getUsersBySearch);
 router.get("/match/", userAuth, getUsersByMatch);
 router.patch("/endorse/:id", userAuth, endorseUser);
 router.patch("/", userAuth, editUser);
