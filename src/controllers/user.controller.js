@@ -28,7 +28,7 @@ export const getUsersBySearch = async (req, res) => {
 
         const loggedInUserId = req.user ? req.user._id : null;
 
-        const filteredUsers = await User.find({ _id: { $ne: loggedInUserId }, $or: [{ displayName: searchRgx }, { username: searchRgx }] }).select("-password");
+        const filteredUsers = await User.find({ _id: { $ne: loggedInUserId }, $or: [{ displayName: searchRgx }, { username: searchRgx }] }).select("-password").populate('teach.category');
 
         res.status(200).json(filteredUsers);
     } catch (error) {
