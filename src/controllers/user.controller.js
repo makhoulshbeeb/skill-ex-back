@@ -21,14 +21,18 @@ export const getUserByToken = async (req, res) => {
 
 export const getUsersBySearch = async (req, res) => {
     try {
-        const search = req.body.search;
+        var search = req.params.search;
+
+        if (!search) {
+            search = ''
+        }
 
         const rgx = (pattern) => new RegExp(`.*${pattern}.*`, 'i');
         const searchRgx = rgx(search);
 
         const loggedInUserId = req.user ? req.user._id : null;
 
-        const filteredUsers = await User.find({ _id: { $ne: loggedInUserId }, $or: [{ displayName: searchRgx }, { username: searchRgx }] }).select("-password").populate('teach.category');
+        const filteredUsers = await User.find({ _id: { $ne: loggedInUserId }, $or: [{ displayName: searchRgx }, { username: searchRgx }] }).select("-password").populate('teach.category').sort({ avgRating: -1 });
 
         res.status(200).json(filteredUsers);
     } catch (error) {
