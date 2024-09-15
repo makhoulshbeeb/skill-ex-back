@@ -40,6 +40,10 @@ io.on("connection", (socket) => {
     socket.on("answerCall", (data) => {
         io.to(userSocketMap[data.to._id]).emit("callAccepted", data.signal)
     });
+
+    socket.on("videoChat", (newMessage) => {
+        io.to(userSocketMap[newMessage.receiverId]).emit("videoChat", newMessage)
+    });
 });
 
 export { app, io, server };
