@@ -30,7 +30,6 @@ io.on("connection", (socket) => {
         console.log("user disconnected", socket.id);
         delete userSocketMap[userId];
         io.emit("getOnlineUsers", Object.keys(userSocketMap));
-        socket.broadcast.emit("callEnded");
     });
 
     socket.on("callUser", (data) => {
@@ -43,6 +42,10 @@ io.on("connection", (socket) => {
 
     socket.on("videoChat", (newMessage) => {
         io.to(userSocketMap[newMessage.receiverId]).emit("videoChat", newMessage)
+    });
+
+    socket.on("callEnded", (data) => {
+        io.to(userSocketMap[data.to._id]).emit("callEnded")
     });
 });
 
