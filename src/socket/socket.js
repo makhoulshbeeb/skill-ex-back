@@ -47,6 +47,11 @@ io.on("connection", (socket) => {
     socket.on("callEnded", (data) => {
         io.to(userSocketMap[data.to._id]).emit("callEnded")
     });
+
+    socket.on("streamUpdate", (data) => {
+        io.to(userSocketMap[data.to._id]).emit("streamUpdate", data.stream)
+
+    })
 });
 
 export { app, io, server };
