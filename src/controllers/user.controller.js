@@ -174,8 +174,21 @@ export const editUser = async (req, res) => {
 
     try {
         const id = req.user._id;
-        const { displayName, email, username, gender, bio, picture, learn, teach } = req.body;
+        var { displayName, email, username, gender, bio, picture, learn, teach } = req.body;
         const user = await User.findById(id).select("-password");
+
+        if (teach) {
+            const temp = teach;
+            teach = teach.filter(el => user.teach.every(el2 => el2.category != el.category));
+            user.teach.forEach(el => {
+                temp.forEach(el2 => {
+                    if (el.category == el2.category) {
+                        teach.push(el)
+                    }
+                })
+            })
+        }
+        console.log(teach)
 
         user.displayName = displayName ?? user.displayName;
         user.email = email ?? user.email;
