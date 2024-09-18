@@ -179,7 +179,7 @@ export const editUser = async (req, res) => {
 
         if (teach) {
             const temp = teach;
-            teach = teach.filter(el => user.teach.every(el2 => el2.category != el.category));
+            teach = teach.filter(el => user.teach.every(el2 => el2.category.toString() != el.category.toString()));
             user.teach.forEach(el => {
                 temp.forEach(el2 => {
                     if (el.category == el2.category) {
