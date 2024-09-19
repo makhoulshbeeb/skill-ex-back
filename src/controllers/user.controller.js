@@ -170,6 +170,19 @@ export const endorseUser = async (req, res) => {
     }
 }
 
+export const updateRole = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { role } = req.body;
+
+        const user = await User.findByIdAndUpdate(id, { $set: { role: role } });
+        res.status(200).json({ response: "User role updated" })
+    } catch (error) {
+        console.error("Error in updateRole: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
 export const editUser = async (req, res) => {
 
     try {
