@@ -236,6 +236,34 @@ export const deleteUser = async (req, res) => {
     }
 };
 
+export const deleteUserAdmin = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+        const user = await User.findById(id);
+
+        if (!user) return res.status(404).json([]);
+
+        user.reviews.forEach(async (el) => await Review.findByIdAndDelete(el));
+
+        const chats = await Chat.find({
+            participants: { $all: [id] },
+        });
+
+        if (!chats) return res.status(404).json([]);
+
+        chats.every(delChat);
+
+        await User.findByIdAndDelete(id);
+
+        res.status(204).json({ response: "User deleted succefully" });
+
+    } catch (e) {
+        console.error("Error in deleteUser: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
 const delChat = async (chat) => {
     chat.messages.every(delMessage);
     await Chat.findByIdAndDelete(chat._id);

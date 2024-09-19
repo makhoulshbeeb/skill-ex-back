@@ -13,5 +13,6 @@ router.get("/match/", userAuth, getUsersByMatch);
 router.patch("/endorse/:id", userAuth, endorseUser);
 router.patch("/", userAuth, editUser);
 router.delete("/", userAuth, deleteUser);
+router.delete("/:id", adminAuth, deleteUser);
 
 export default router;
