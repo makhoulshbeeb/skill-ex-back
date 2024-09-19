@@ -91,3 +91,31 @@ export const deleteReview = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+export const deleteReviewAdmin = async (req, res) => {
+    try {
+        const { id: reviewId } = req.params;
+
+        const review = await Review.findById(reviewId);
+
+        if (!review) return res.status(404).json([]);
+
+        const receiverId = review.receiverId;
+
+        const receiver = await User.findById(receiverId);
+        receiver.avgRating = receiver.reviews.length > 1 ? (receiver.avgRating * (receiver.reviews.length) - review.rating) / (receiver.reviews.length - 1) : 0;
+        receiver.reviews = receiver.reviews.filter((el) => {
+            if (el == reviewId) {
+                return false;
+            }
+            return true;
+        })
+        await receiver.save();
+        await Review.findByIdAndDelete(reviewId);
+        return res.status(204).json({ response: "Review deleted succefully" });
+
+    } catch (error) {
+        console.log("Error in deleteReview controller: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
