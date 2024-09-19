@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 
-const userAuth = async (req, res, next) => {
+const adminAuth = async (req, res, next) => {
     try {
         const token = req.cookies.token;
 
@@ -21,6 +21,10 @@ const userAuth = async (req, res, next) => {
             return res.status(404).json({ error: "User not found" });
         }
 
+        if (user.role != 'Admin') {
+            return res.status(401).json({ error: "Unauthorized - Access Denied" });
+        }
+
         req.user = user;
 
         next();
@@ -30,4 +34,4 @@ const userAuth = async (req, res, next) => {
     }
 };
 
-export default userAuth;
+export default adminAuth;
