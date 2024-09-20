@@ -9,7 +9,7 @@ const categorySchema = new mongoose.Schema(
         },
         picture: {
             type: String,
-            default: "",
+            default: "https://e7.pngegg.com/pngimages/75/866/png-clipart-category-management-organization-retail-management-miscellaneous-text-thumbnail.png",
         },
     },
     { timestamps: true }

@@ -46,7 +46,13 @@ export const getReviews = async (req, res) => {
     try {
         const { id: receiverId } = req.params;
 
-        const receiver = await User.findById(receiverId).populate("reviews");
+        const receiver = await User.findById(receiverId).populate({
+            path: "reviews",
+            populate: {
+                path: 'reviewerId',
+                select: '_id displayName username email picture'
+            }
+        });
 
         if (!receiver) return res.status(200).json([]);
 

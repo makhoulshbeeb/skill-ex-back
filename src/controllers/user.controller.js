@@ -12,6 +12,7 @@ export const getUserByToken = async (req, res) => {
             displayName: user.displayName,
             username: user.username,
             picture: user.picture,
+            avgRating: user.avgRating
         });
     } catch (error) {
         console.error("Error in getUsersByToken: ", error.message);
