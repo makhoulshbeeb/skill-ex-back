@@ -176,7 +176,7 @@ export const updateRole = async (req, res) => {
         const { id } = req.params;
         const { role } = req.body;
 
-        const user = await User.findByIdAndUpdate(id, { $set: { role: role } });
+        await User.findByIdAndUpdate(id, { role: role });
         res.status(200).json({ response: "User role updated" })
     } catch (error) {
         console.error("Error in updateRole: ", error.message);
