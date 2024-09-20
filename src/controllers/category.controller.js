@@ -13,10 +13,10 @@ export const getCategories = async (req, res) => {
 export const addCategory = async (req, res) => {
     try {
         const { name, picture } = req.body;
-        const category = await Category.create(
+        const category = await Category.create({
             name,
             picture
-        );
+        });
         await category.save();
         res.status(200).json(category);
     } catch (error) {

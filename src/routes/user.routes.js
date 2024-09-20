@@ -1,6 +1,6 @@
 import express from "express";
 import userAuth from "../middleware/userAuth.js";
-import { deleteUser, editUser, endorseUser, getUserById, getUserByToken, getUserByUsername, getUsersByMatch, getUsersBySearch, updateRole } from "../controllers/user.controller.js";
+import { deleteUser, deleteUserAdmin, editUser, endorseUser, getUserById, getUserByToken, getUserByUsername, getUsersByMatch, getUsersBySearch, updateRole } from "../controllers/user.controller.js";
 import adminAuth from "../middleware/adminAuth.js";
 
 const router = express.Router();
@@ -18,6 +18,6 @@ router.delete("/", userAuth, deleteUser);
 
 router.get("/admin", adminAuth, getUserByToken);
 router.patch("/role/:id", adminAuth, updateRole);
-router.delete("/:id", adminAuth, deleteUser);
+router.delete("/other/:id", adminAuth, deleteUserAdmin);
 
 export default router;
