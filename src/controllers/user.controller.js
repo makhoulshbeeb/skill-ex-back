@@ -284,4 +284,4 @@ const delChat = async (chat) => {
 };
 const delMessage = async (message) => {
     await Message.findByIdAndDelete(message._id);
-} 
+};
