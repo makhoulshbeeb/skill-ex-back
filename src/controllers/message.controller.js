@@ -30,13 +30,10 @@ export const sendMessage = async (req, res) => {
 
         await Promise.all([chat.save(), newMessage.save()]);
 
-        const senderSocketId = getReceiverSocketId(senderId);
-        io.to(senderSocketId).emit("newMessage", { newMessage });
-
         const receiverSocketId = getReceiverSocketId(receiverId);
 
         if (receiverSocketId) {
-            io.to(receiverSocketId).emit("newMessage", { newMessage, sender: chat.participants[0]._id == senderId ? chat.participants[0] : chat.participants[1] });
+            io.to(receiverSocketId).emit("newMessage", { newMessage, sender: chat.participants[0]._id.toString() == senderId.toString() ? chat.participants[0] : chat.participants[1] });
         }
 
         res.status(201).json(newMessage);
